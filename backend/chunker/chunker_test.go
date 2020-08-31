@@ -44,6 +44,7 @@ func TestIntegration(t *testing.T) {
 			"DirCacheFlush",
 			"UserInfo",
 			"Disconnect",
+			"Resume",
 		},
 	}
 	if *fstest.RemoteName == "" {
