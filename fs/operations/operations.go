@@ -462,7 +462,8 @@ func Copy(ctx context.Context, f fs.Fs, dst fs.Object, remote string, src fs.Obj
 							cacheFile := filepath.Join(cacheDir, remote)
 							removeErr := os.Remove(cacheFile)
 							if err != nil && !os.IsNotExist(removeErr) {
-								return nil, errors.Wrap(err, "failed to remove resume cache file after upload")
+								//return nil, errors.Wrap(err, "failed to remove resume cache file after upload")
+								return nil, err
 							}
 						}
 					}

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -1185,7 +1186,7 @@ func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, op
 						return err
 					}
 					if !o.fs.Hashes().Contains(hashType) {
-						return errors.Errorf("unsupported resume hash: %q", resumeOpt.Hash)
+						return fmt.Errorf("unsupported resume hash: %q", resumeOpt.Hash)
 					}
 				}
 				hasher, err = hash.NewMultiHasherTypes(hash.NewHashSet(hashType))

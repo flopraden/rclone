@@ -40,7 +40,8 @@ func CreateCacheRoot(parentOSPath, fsName, fsRoot, cacheName string) (rootOSPath
 	relativeOSPath := filepath.FromSlash(encoder.OS.FromStandardPath(relativeDir))
 	rootOSPath = file.UNCPath(filepath.Join(parentOSPath, cacheName, relativeOSPath))
 	if err = os.MkdirAll(rootOSPath, 0700); err != nil {
-		return "", "", errors.Wrapf(err, "failed to create %s cache directory", cacheName)
+		//return "", "", fmt.Errorf("failed to create %s cache directory: %w", cacheName, err)
+		return "", "", err
 	}
 
 	parentStdPath := encoder.OS.ToStandardPath(filepath.ToSlash(parentOSPath))

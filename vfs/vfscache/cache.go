@@ -84,7 +84,8 @@ func New(ctx context.Context, fremote fs.Fs, opt *vfscommon.Options, avFn AddVir
 	}
 	fdata, err := fscache.Get(ctx, dataStdPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get data cache backend")
+		//return nil, errors.Wrap(err, "failed to get data cache backend")
+		return nil, err
 	}
 	fs.Debugf(nil, "vfs cache: data root is %q", dataOSPath)
 
@@ -94,7 +95,8 @@ func New(ctx context.Context, fremote fs.Fs, opt *vfscommon.Options, avFn AddVir
 	}
 	fmeta, err := fscache.Get(ctx, metaStdPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get metadata cache backend")
+		//return nil, errors.Wrap(err, "failed to get metadata cache backend")
+		return nil, err
 	}
 	fs.Debugf(nil, "vfs cache: metadata root is %q", metaOSPath)
 
