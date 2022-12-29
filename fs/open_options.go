@@ -269,7 +269,7 @@ func (o *OptionResume) SetID(ctx context.Context, ID, hashName, hashState string
 	fingerprint := Fingerprint(ctx, o.Src, true)
 	data, err := marshalResumeJSON(ctx, fingerprint, ID, hashName, hashState)
 	if err != nil {
-		return errors.Wrapf(err, "failed to marshal data JSON")
+		return fmt.Errorf("failed to marshal data JSON: %w", err)
 	}
 	if len(data) < int(ci.MaxResumeCacheSize) {
 		// Each remote will have its own directory for cached resume files
@@ -279,26 +279,26 @@ func (o *OptionResume) SetID(ctx context.Context, ID, hashName, hashState string
 		}
 		err = os.MkdirAll(dirPath, os.ModePerm)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create cache directory %v", dirPath)
+			return fmt.Errorf("failed to create cache directory %v : %w", dirPath, err)
 		}
 		// Write resume data to disk
 		cachePath := filepath.Join(dirPath, o.Remote)
 		cacheFile, err := os.Create(cachePath)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create cache file %v", cachePath)
+			return fmt.Errorf("failed to create cache file %v: %w", cachePath, err)
 		}
 		defer func() {
 			_ = cacheFile.Close()
 		}()
 		_, errWrite := cacheFile.Write(data)
 		if errWrite != nil {
-			return errors.Wrapf(errWrite, "failed to write JSON to file")
+			return fmt.Errorf("failed to write JSON to file: %w", errWrite)
 		}
 	}
 	if !o.CacheCleaned {
 		rootCacheDir := filepath.Join(o.CacheDir, "resume")
 		if err := cleanResumeCache(ctx, rootCacheDir); err != nil {
-			return errors.Wrapf(err, "failed to clean resume cache")
+			return fmt.Errorf("failed to clean resume cache: %w", err)
 		}
 	}
 	o.CacheCleaned = true
@@ -339,7 +339,7 @@ func cleanResumeCache(ctx context.Context, rootCacheDir string) error {
 				// Empty subdirectories in the resume cache dir can be removed
 				removeErr := os.Remove(path)
 				if err != nil && !os.IsNotExist(removeErr) {
-					return errors.Wrapf(err, "failed to remove empty subdirectory: %s", path)
+					return fmt.Errorf("failed to remove empty subdirectory: %s: %w", path, err)
 				}
 				return nil
 			}
@@ -349,7 +349,7 @@ func cleanResumeCache(ctx context.Context, rootCacheDir string) error {
 			return nil
 		})
 	if walkErr != nil {
-		return errors.Wrapf(walkErr, "error walking through cache when cleaning cache dir")
+		return fmt.Errorf("error walking through cache when cleaning cache dir: %w", walkErr)
 	}
 	if totalCacheSize > int64(ci.MaxResumeCacheSize) {
 		sort.Slice(paths, func(i, j int) bool {
@@ -360,7 +360,7 @@ func cleanResumeCache(ctx context.Context, rootCacheDir string) error {
 				break
 			}
 			if err := os.Remove(p); err != nil {
-				return errors.Wrapf(err, "error removing oldest cache file: %s", p)
+				return fmt.Errorf("error removing oldest cache file: %s: %w", p, err)
 			}
 			totalCacheSize -= pathsWithInfo[p].Size()
 			Debugf(p, "Successfully removed oldest cache file")

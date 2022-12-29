@@ -7,7 +7,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/rclone/rclone/lib/encoder"
 	"github.com/rclone/rclone/lib/file"
 )
